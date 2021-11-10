@@ -1,4 +1,4 @@
-;this script performs the modulo operation on two numbers N and K stored in registers R0 and R1. The result is stored in R2.
+; This program performs the modulo operation on two numbers N and K stored in registers R0 and R1. The result is stored in R2.
 ; Dividend = N = R0
 ; Divisior = k = R1
 
@@ -6,7 +6,7 @@
 ; For example, if the inputs are Dividend = x000F (decimal 15) and Divisor= x0004 ( decimal 4) 
 ; The result in R2 is x0003 (since 15 Modulo 4 = 3).
 
-; The “main” in your program will simply read the numbers N (Dividend) and K (the Divisor) from memory locations x3100 and x3101 respectively 
+; The “main” in the program will use the caller save convention. It reads the numbers N (Dividend) and K (the Divisor) from memory locations x3100 and x3101 respectively 
 ; and will then call the MODULO subroutine. It then stores the Result (N Modulo K) in memory location x3102.
 
 .ORIG x3000 ; Start PC@ x3000
@@ -40,6 +40,7 @@ Main
     LD R0, result
     STR R2, R0, #0
     
+    ; Load the original values back into R0 and R1 to follow caller save convention
     LD R2, saveR0
     LDR R0, R2, #0
     LD R2, saveR1
