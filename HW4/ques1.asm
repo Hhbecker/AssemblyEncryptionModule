@@ -1,48 +1,52 @@
+; This program performs either addition, subtraction, or multiplication of two numbers based on user input
+; Author: Henry Becker
+
 .ORIG x3000 ; Start PC@ x3000
 
- ; print "Starting Program" string 
-    LEA R0, msg1    ; load prompt message into R0
-    PUTS    ; calls system subroutine to print message stored in R0
+ ; Print "Starting Program" string 
+    LEA R0, msg1    ; Load prompt message into R0
+    PUTS    ; Calls system subroutine to print message stored in R0
     ; Starting Program
     
-    ; load n1 and n2 into x4000 and x4001
-    LD R0, sourceAddy
-    LD R1, n1
-    STR R1, R0, #0
-    LD R1, n2
+    ; Load n1 and n2 into x4000 and x4001
+    LD R0, sourceAddy ; Load 4000 into R0
+    LD R1, n1 ; Load the desired first number into R1
+    STR R1, R0, #0 ;Store the desired first number at address specified by R0 with offset 0
+    LD R1, n2 
     STR R1, R0, #1
     
-    PromptUser
-    ; how to create a new line in output? 
-    LEA R0, msg2    ; load prompt message into R0
-    PUTS    ; calls system subroutine to print message stored in R0
+    PromptUser ; This is the label each subroutine will return to 
+    LEA R0, msg2    ; Load prompt message into R0
+    PUTS    ; Calls system subroutine to print message stored in R0
     
-    ; read the number from input
+    ; Read the number from input
     IN
     
     ; check if A
     ADD R1, R0, #0  ; copy R0 to R1
-    LD R2, A
-    ADD R1, R1, R2
-    BRz Adding    ; If last instruction is zero branch to ADDING
+    LD R2, A ; Load ASCII number for capital A into R2
+    ADD R1, R1, R2  ; store the result of addition of input number and ascii A in R1
+    BRz Adding    ; If last instruction is zero the input was in fact A so branch to Adding
     
     ; check if S
     ADD R1, R0, #0  ; copy R0 to R1
     LD R2, S
     ADD R1, R1, R2
-    BRz Subtracting    ; If last instruction is zero branch to ADDING
+    BRz Subtracting    ; If last instruction is zero branch to Subtracting
     
     ; check if M
     ADD R1, R0, #0  ; copy R0 to R1
     LD R2, M
     ADD R1, R1, R2
-    BRz Multiplying    ; If last instruction is zero branch to ADDING
+    BRz Multiplying    ; If last instruction is zero branch to Multiplying
     
     ; check if X
     ADD R1, R0, #0  ; copy R0 to R1
     LD R2, X
     ADD R1, R1, R2
     BRz Halting    
+    
+    ; if you get to here input was not A,S,M, or X
     
     LEA R0, invalid    ; load prompt message into R0
     PUTS    ; calls system subroutine to print message stored in R0
@@ -69,14 +73,14 @@ Subtracting ; 4000 + - 40001
     BRnzp PromptUser
     
 Multiplying
-       LD R2, sourceAddy
+       LD R2, sourceAddy ; Load address x4000 into R2
        LDR R3, R2, #0 ; number stored in x4000 loaded into R3
-       LDR R4, R2, #1 ; number stored in x4001 loaded into R3
+       LDR R4, R2, #1 ; number stored in x4001 loaded into R4
        AND R1, R1, #0   ; clear R1
-LOOP2  ADD R1, R1, R4     ; Place the sum of Register 2 (num at 4001) and Register 4 into Register 4 (product)
-       ADD R3, R3, #-1    ; Place the sum of Register 2 (i) and -1 in Register 2 (i) (decrement i)
-       BRp LOOP2    ; If last instruction is positive branch to LOO
-       STR R1, R2, #2
+LOOP2  ADD R1, R1, R4     ; Repeatedly add Register 4 into Register 1 (product)
+       ADD R3, R3, #-1    ; Decrement i
+       BRp LOOP2    ; If last instruction is positive (i has not reached zero) branch to LOOP2
+       STR R1, R2, #2 ; If last instruction was no positive then i is zero, the multiplication is complete, and the result can be stored in address R2 + offset 2
        BRnzp PromptUser
     
 Halting 
