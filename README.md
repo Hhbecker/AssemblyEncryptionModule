@@ -1,6 +1,8 @@
 # LC3AssemblyProgramming
 
-The LC-3 (Little Computer 3) is a software tool that simulates a 16 bit instruction set architecture. chiragsakhuja/lc3tools.
+The LC-3 (Little Computer 3) is a software tool that simulates a 16 bit instruction set architecture. 
+
+Chekc out the tool here: https://github.com/chiragsakhuja/lc3tools
 
 
 The LC-3 includes: 
