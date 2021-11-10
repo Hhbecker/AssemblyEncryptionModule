@@ -1,5 +1,5 @@
 ; This program performs either addition, subtraction, or multiplication of two numbers based on user input
-; Author: Henry Becker
+; Author: Henry Becker 
 
 .ORIG x3000 ; Start PC@ x3000
 
