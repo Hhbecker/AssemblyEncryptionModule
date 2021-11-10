@@ -1,4 +1,4 @@
-; this program will implement the peek function in a stack and will also check for underflow 
+; This program will implement the peek function in a stack and will also check for underflow 
 
 .ORIG x3000 ; Start PC@ x3000
 
@@ -44,18 +44,18 @@ PromptUser
 Push
     ; read the number from input
     IN
-    STR R0, R6, #0
-    ADD R6, R6, #-1
+    STR R0, R6, #0 ; store number in R0 (input) specified by address at R6 + offset 0 
+    ADD R6, R6, #-1 ; decrement the top of stack pointer
     BRnzp PromptUser
 
 Pop 
-    LD R2, sourceAddy
-    NOT R2, R2
-    ADD R2, R2, #1
-    ADD R2, R2, R6
-    BRz Underflow 
-    LDR R0, R6, #0
-    ADD R6, R6, #1
+    LD R2, sourceAddy ; Load address 5000
+    NOT R2, R2 ; 2's C of addy
+    ADD R2, R2, #1 ; 2's C of addy
+    ADD R2, R2, R6 
+    BRz Underflow ; if previous addition was zero the stack is empty and you can't pop
+    LDR R0, R6, #0 ; else load value at memory address R6 into R0
+    ADD R6, R6, #1 ; decrement stack pointer
     BRnzp PromptUser
     
 Peek
