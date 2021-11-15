@@ -1,13 +1,9 @@
 ; Encryption Module
 ; Author: Henry Becker 
 
-;x4000
-;x4001
-;x4002
-;x4003
-;x4004
-;x4005
-;x4006 
+;x4000 encrypted message char 1
+;x4001 encrypted message char 2
+;x4002 encrypted message char 3
 ;etc
 ;x400A = input (E, D, or X)
 ;x400B = bit shift
@@ -15,6 +11,13 @@
 ;x400D = Caesar1
 ;x400E = Caesar2
 ;x400F = Caesar3
+
+;x5000 decrypted message char 1
+;x5001 decrypted message char 2
+;x5002 decrypted message char 3
+
+; etc 
+
 
 
 
@@ -175,7 +178,9 @@ afterHundo
         ;load ones place and add it to R4
         LD R1, msgAddy
         LDR R0, R1, xF ; R0 contains number input by user
-        ADD R4, R4, R0
+        ADD R4, R4, R0 ; This is the final number in decimal (in R4)
+        AND R6, R6, #0 ; clear R6
+        ADD R6, R6, R4 ; copy final number into R6
         ; we know the number is not less than zero so all we need to do is check if its greater than 127 
         ; number -127 will be positive if its greater than 127
         LD R0, keyUpperBound
@@ -189,7 +194,7 @@ afterHundo
     
         JSR Encrypt
     ;
-Encrpyt
+Encrypt
 ; prompt user for 10 character message 
 ; encrpyt the message 
 ; store in x4000-x4009 
@@ -197,13 +202,31 @@ Encrpyt
     LEA R0, promptmsg    ; Load prompt message into R0
     PUTS
     
-    ; Read in and store 5 keyboard inputs
+    ; last three of key stored as decimal in R6
+    
+    ; Read in and store 10 encrypted keyboard inputs
     GETC
-    JSR Bitshift
     JSR Viginere
     JSR Caesar
+    ;JSR Bitshift
+    ; result of each cipher is now in R0, store this at memory address x4000
+    LD R1, msgAddy ; load address x4000 into R1
+    STR R0, R1, #0 ; store contents of R0 into x4000
+    
+   ; GETC
+   ; JSR Viginere
+   ; JSR Caesar
+   ; ;JSR Bitshift
+   ;; result of each cipher is now in R0, store this at memory address x4000
+   ; LD R1, msgAddy ; load address x4000 into R1
+   ; STR R0, R1, #1 ; store contents of R0 into x4001
+    
+    
+
+
     
 Bitshift
+    ;DOI NEED TO CONVERT THE KEY TO A DECIMAL NUMBER OR DO I LEAVE IT IN ASCII? I THINK CONVERT TO DECIMAL
     ; R0 contains msg char
     ; convert key value from ascii to decimal 
     ; multiply key value by by 
@@ -211,23 +234,54 @@ Bitshift
     ; First: compute 2^Key value 
     ; Second: multiply that by msg char
     
+       LD R1, msgAddy
+       LDR R2, R1, xB ; first Key value now loaded into R2
        AND R3, R3, #0   ; clear R3 to store product
-       ADD R0, R0, R3
-       BRz prodZero
-       ADD R1, R1, R3
-       BRz prodZero
-LOOP2  ADD R3, R1, R3     ; Repeatedly add Register 1 into Register 3 (product)
-       ADD R0, R0, #-1    ; Decrement i
-       BRp LOOP2    ; If last instruction is positive (i has not reached zero) branch to LOOP2
+LOOP1   ADD R3, R3, #2     ; Repeatedly add Register 1 into Register 3 (product)
+       ADD R2, R2, #-1    ; Decrement i
+       BRp LOOP1    ; If last instruction is positive (i has not reached zero) branch to LOOP2
+       ;at this point we've computed 2^key
+       ; R3 times R0 should give us the bit shift we want 
        RET
-    
+       
+Caesar ; N = 128 = R3
+       ; k = 3 digit number from key = R6
+       ; m = message char = R0
+       ; result = (m + k) mod N
+       LD R1, N
+       ADD R0, R0, R6 ; Add (m + k) store in R2
+       ; compute R0 modulo R1 
+       JSR MODULO
+       
+MODULO
+; take the value in R0 (result from viginere cipher)
+; copy the value in R1 (128) to another register and 2's compliment it
+    AND R3, R3, #0
+    ADD R3, R1, #0
+    NOT R3, R3
+    ADD R3, R3, #1
+    ; store the last result in R4 to save it
+    ADD R4, R0, #0
+; add R0 and R3 and store in R0 
+    ADD R0, R0, R3
+; if R0 is less than R3 then R2 will be negative and we return result in R2
+    BRzp MODULO
+    ADD R2, R4, #0
+    AND R0, R0, #0 ; clear R0 
+    ADD R0, R2, R0 ; copy result from R2 into R0
+    RET ;return result in R0
+       
     
 Viginere ; this method performs input char XOR K where K is the char of the key 
 
+    ; KEY VALUE NOT LOADED YET
     ; perform XOR on char stored in R0 and contents of memory address of 2nd key bit to char 
     ; R0 = input 0
     ; R1 = input 1
     ; R2 = result
+    
+    LD R3, msgAddy
+    LDR R1, R3, xC
     AND R3, R3, #0 ; clear R3 to store result of XOR
 
     ; Bitwise XOR
@@ -237,9 +291,10 @@ Viginere ; this method performs input char XOR K where K is the char of the key
     NOT R1, R1     ; not temp in with itself 
     AND R1, R0, R1    ; and the temp in and array in 
     NOT R1, R1 ; not the temp in and array in 
-    AND  R2, R1, R2 ; final and - and var3 and the other register 
-
-    RET; 
+    AND  R2, R1, R2 ; final and 
+    AND R0, R0, #0
+    ADD R0, R0, R2 ; copy result from R2 to R0
+    RET; returns result in R0
 
 
 Decrypt
@@ -279,9 +334,9 @@ Multiply ; adds R1 into R3 R0 times
        BRz prodZero
        ADD R1, R1, R3
        BRz prodZero
-LOOP2  ADD R3, R1, R3     ; Repeatedly add Register 1 into Register 3 (product)
+LOOP  ADD R3, R1, R3     ; Repeatedly add Register 1 into Register 3 (product)
        ADD R0, R0, #-1    ; Decrement i
-       BRp LOOP2    ; If last instruction is positive (i has not reached zero) branch to LOOP2
+       BRp LOOP    ; If last instruction is positive (i has not reached zero) branch to LOOP2
        RET
        
 prodZero
@@ -309,8 +364,10 @@ hundred .FILL #100
 
 keyLowerBound .FILL #-27
 keyUpperBound .FILL #-127
+N .FILL #128
 
 msgAddy .FILL x4000
+
 
 a    .FILL #5
 b    .FILL #6
