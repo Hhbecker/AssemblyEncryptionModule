@@ -1,16 +1,28 @@
 ; Encryption Module
 ; Author: Henry Becker 
 
+;x4000
+;x4001
+;x4002
+;x4003
+;x4004
+;x4005
+;x4006 
+;etc
+;x400A = input (E, D, or X)
+;x400B = bit shift
+;x400C = viginere 
+;x400D = Caesar1
+;x400E = Caesar2
+;x400F = Caesar3
+
+
+
 .ORIG x3000 ; Start Program Counter @ x3000
 
     ; Print start message 
     LEA R0, startmsg    ; Load prompt message into R0
     PUTS    ; Calls system subroutine to print message stored in R0
-    
-    ; test wether you can branch multiple times and still return back to the last function caller (branching doesn't effect R7)
-    LD R0, a
-    LD R1, b
-    JSR Multiply
     
     
     PromptUser ; This is the label the invalid input case will return to 
@@ -174,9 +186,64 @@ afterHundo
     ; AT THIS POINT THE KEY MUST BE VALID
     ; If the input was E BR to Encrypt 
     ; If the input was D BR to Decrypt
+    
+        JSR Encrypt
     ;
+Encrpyt
+; prompt user for 10 character message 
+; encrpyt the message 
+; store in x4000-x4009 
+
+    LEA R0, promptmsg    ; Load prompt message into R0
+    PUTS
+    
+    ; Read in and store 5 keyboard inputs
+    GETC
+    JSR Bitshift
+    JSR Viginere
+    JSR Caesar
+    
+Bitshift
+    ; R0 contains msg char
+    ; convert key value from ascii to decimal 
+    ; multiply key value by by 
+    ;multiply by adding R1 into R3 R0 times
+    ; First: compute 2^Key value 
+    ; Second: multiply that by msg char
+    
+       AND R3, R3, #0   ; clear R3 to store product
+       ADD R0, R0, R3
+       BRz prodZero
+       ADD R1, R1, R3
+       BRz prodZero
+LOOP2  ADD R3, R1, R3     ; Repeatedly add Register 1 into Register 3 (product)
+       ADD R0, R0, #-1    ; Decrement i
+       BRp LOOP2    ; If last instruction is positive (i has not reached zero) branch to LOOP2
+       RET
     
     
+Viginere ; this method performs input char XOR K where K is the char of the key 
+
+    ; perform XOR on char stored in R0 and contents of memory address of 2nd key bit to char 
+    ; R0 = input 0
+    ; R1 = input 1
+    ; R2 = result
+    AND R3, R3, #0 ; clear R3 to store result of XOR
+
+    ; Bitwise XOR
+    AND R2, R0, R1    ; and input 1&2 and put it in var3 
+    NOT R2, R2; not it 
+    NOT R0, R0, ; not array in with itself 
+    NOT R1, R1     ; not temp in with itself 
+    AND R1, R0, R1    ; and the temp in and array in 
+    NOT R1, R1 ; not the temp in and array in 
+    AND  R2, R1, R2 ; final and - and var3 and the other register 
+
+    RET; 
+
+
+Decrypt
+
     
     
     
