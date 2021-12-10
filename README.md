@@ -15,3 +15,27 @@ The LC-3 includes:
 I used the LC-3 tools simulator in conjunction with the textbook: Introduction to Computing Systems - from bits & gates to C/C++ & beyond by yale n. patt and sanjay j. patel textbook as part of the Computer Architecture course CS2461 at George Washington University (Fall 2021).
 
  
+
+//////////////////////////
+Encryption module
+
+Started with a long document of specifications and we had to create the cipher and we had to come up with our own ways of implementing each component of the cipher in assembly. 
+-managing register space because there are only seven available registers
+-how to store keys in memory 
+-keyboard inputs are stored in ascii and we had to check key validity based on specs
+-had to develop our own ways to perform the three ciphers 
+-had to develop our own ways to reverse the ciphers 
+
+Talk about each encryption at the bit level
+
+Problems I encountered:
+-labels had to be within 256 lines of label call (LD, LEA etc)
+-the way branches work it’s hard to keep code neat 
+
+On resume: created an encryption module that performs a caser cipher and viginere cipher encryption as well as decryption in assembly. 
+
+Find a test case that works and take pictures of it and don’t ever open it again. 
+
+Talk about OTP encryption as impossible to break
+https://www.google.com/search?q=one+time+pad+(OTP)+encryption&oq=one+time+pad+(OTP)+encryption&aqs=chrome..69i57j0i22i30j0i390.294j0j7&sourceid=chrome&ie=UTF-8
+
