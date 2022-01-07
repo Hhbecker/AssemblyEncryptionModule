@@ -3,7 +3,6 @@ This repository contains my programming work in the LC3 Assembly language. The L
 
 Downlaod the simulator here: [chiragsakhuja/lc3tools](https://github.com/chiragsakhuja/lc3tools)
 
-
 The LC-3 includes: 
 * physical I/O via keyboard and monitor
 * TRAPs to the operating system for handling service calls
@@ -18,6 +17,13 @@ I used the LC-3 tools simulator in conjunction with the textbook: Introduction t
 
 //////////////////////////
 Encryption module
+
+
+To Do:
+* seperate LC3 HW and encryption module repos 
+
+
+
 
 Started with a long document of specifications and we had to create the cipher and we had to come up with our own ways of implementing each component of the cipher in assembly. 
 -managing register space because there are only seven available registers
@@ -39,3 +45,4 @@ Find a test case that works and take pictures of it and don’t ever open it aga
 Talk about OTP encryption as impossible to break
 https://www.google.com/search?q=one+time+pad+(OTP)+encryption&oq=one+time+pad+(OTP)+encryption&aqs=chrome..69i57j0i22i30j0i390.294j0j7&sourceid=chrome&ie=UTF-8
 
+Encryption module -iCloud Keychain is protected by 256-bit AES encryption to store and transmit passwords and credit card information, and also uses elliptic curve asymmetric cryptography and key wrapping – a method of security that ensures all data synced between devices is kept safe.
