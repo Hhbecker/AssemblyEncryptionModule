@@ -1,4 +1,4 @@
-# LC3AssemblyProgramming
+# AssemblyEncryptionModule
 This repository contains my programming work in the LC3 Assembly language. The LC-3 (Little Computer 3) is a software tool that simulates a 16 bit instruction set architecture. 
 
 Downlaod the simulator here: [chiragsakhuja/lc3tools](https://github.com/chiragsakhuja/lc3tools)
