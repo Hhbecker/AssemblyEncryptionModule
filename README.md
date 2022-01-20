@@ -1,7 +1,7 @@
-# AssemblyEncryptionModule
-This repository contains an encryption module written in the LC3 assembly language. The project specifications called for a variation of an ARX (Add - Rotate - XOR) block cipher. The variation is a combination of a Caesar cipher, Bitwise shift, and XOR.
+# Encryption Module
+This repository contains an encryption module written in the LC3 assembly language. The project specifications called for a variation of an ARX (Add - Rotate - XOR) block cipher. This program uses a combination of a Caesar cipher, bitwise shift, and XOR cipher.
 
-## The LC3 Assembly Language
+# The LC3 Assembly Language
 The LC-3 (Little Computer 3) is a software tool that simulates a 16 bit instruction set architecture. 
 
 The LC-3 includes: 
